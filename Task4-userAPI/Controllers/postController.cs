@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Task4_userAPI.Filters;
 using Task4_userAPI.Models;
+using Task4_userAPI.Roles;
 
 namespace Task4_userAPI.Controllers
 {
     [Route("api/[controller]")]
+  
     [ApiController]
     public class postController : ControllerBase
     {

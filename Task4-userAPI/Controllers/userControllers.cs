@@ -24,7 +24,8 @@ namespace Task4_userAPI.Controllers
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult<List<user>> getAll()
         {
-            return _userRepo.getAll();
+            var userVM = _mapper.Map<UserVM>(_userRepo.getAll());
+            return Ok(userVM);
         }
 
         [HttpGet("{id}")]
@@ -35,7 +36,7 @@ namespace Task4_userAPI.Controllers
             // if (_user == null)
             //    return NotFound();
             var userVM = _mapper.Map<UserVM>(_user);
-            return userVM;
+            return Ok(userVM);
         }
 
         [HttpDelete]
@@ -43,9 +44,10 @@ namespace Task4_userAPI.Controllers
         public ActionResult Delete(int id)
         {
             var _user = _userRepo.get(id);
+            var userVM = _mapper.Map<UserVM>(_user);
             if (_user == null)
-                return NotFound();
-            _userRepo.delete(id);
+               return NotFound();
+           // userVM.delete(id);
             return Ok();
         }
 
@@ -54,8 +56,9 @@ namespace Task4_userAPI.Controllers
         public ActionResult update(user _user)
         {
             var user = _userRepo.get(_user.Id);
-            if (user == null) return NotFound();
-            _userRepo.update(_user);
+            var userVM = _mapper.Map<UserVM>(_user);
+             if (user == null) return NotFound();
+            //userVM.update(_user);
             return Ok();
         }
 
