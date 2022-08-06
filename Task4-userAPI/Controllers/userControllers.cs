@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Task4_userAPI.DataTransferObject;
 using Task4_userAPI.Filters;
@@ -14,13 +15,16 @@ namespace Task4_userAPI.Controllers
     {
         private IUserRepo _userRepo;
         private IMapper _mapper;
-        public userControllers(IUserRepo userRepo,IMapper mapper)
+        private IpostRepo _postRepo;
+        public userControllers(IUserRepo userRepo, IpostRepo postRepo, IMapper mapper)
         {
             _userRepo = userRepo;
             _mapper = mapper;
+            _postRepo = postRepo;
+
 
         }
-        [HttpGet]
+        [HttpGet, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult<List<user>> getAll()
         {
@@ -28,7 +32,7 @@ namespace Task4_userAPI.Controllers
             return Ok(userVM);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult<user> get(int id)
         {
@@ -39,7 +43,7 @@ namespace Task4_userAPI.Controllers
             return Ok(userVM);
         }
 
-        [HttpDelete]
+        [HttpDelete, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult Delete(int id)
         {
@@ -51,7 +55,7 @@ namespace Task4_userAPI.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult update(user _user)
         {
@@ -62,7 +66,7 @@ namespace Task4_userAPI.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult create(user _user)
         {
@@ -70,5 +74,7 @@ namespace Task4_userAPI.Controllers
             return Ok();
 
         }
+
+       
     }
 }

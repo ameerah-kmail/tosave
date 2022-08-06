@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Task4_userAPI.Filters;
 using Task4_userAPI.Models;
 using Task4_userAPI.Roles;
@@ -18,14 +19,14 @@ namespace Task4_userAPI.Controllers
             _postRepo = postRepo;
 
         }
-        [HttpGet]
+        [HttpGet, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult<List<post>> getAll()
         {
             return _postRepo.getAll();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult<post> get(int id)
         {
@@ -35,7 +36,7 @@ namespace Task4_userAPI.Controllers
             return _post;
         }
 
-        [HttpDelete]
+        [HttpDelete, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult Delete(int id)
         {
@@ -46,7 +47,7 @@ namespace Task4_userAPI.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult update(post _post)
         {
@@ -56,10 +57,12 @@ namespace Task4_userAPI.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult create(post _post)
         {
+            if(ClaimTypes.NameIdentifier==null)
+                return NotFound();
             _postRepo.add(_post);
             return Ok();
 
