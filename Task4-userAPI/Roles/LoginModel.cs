@@ -10,5 +10,9 @@ namespace Task4_userAPI.Roles
 
         [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
+         int GetUserIdFromCredentials(LoginModel loginModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -5,14 +5,14 @@ namespace Task4_userAPI.Repo
 {
     public interface IpostRepo : IGenRepo<post>
     {
-
+        public List<post> Search(int pageN, int pagesize, string phrase);
     }
     public class postRepo :GenRepo<post>, IpostRepo
     {
-        //private MVCContext _context;
+        private MVCContext _context;
         public postRepo(MVCContext context): base(context)
         {
-          //  _context = context;
+            _context = context;
 
         }
       /*  public void add(post _post)
@@ -60,5 +60,14 @@ namespace Task4_userAPI.Repo
                 _context.SaveChanges();
             }
         }*/
+      //where-->skip-->take`
+        public List<post> Search(int pageN, int pagesize, string phrase)
+        {
+         var pagedData = _context.posts.Where(s => s.Title.Contains(phrase))
+                .Skip((pageN - 1) * pagesize)
+         .Take(pageN)
+         .ToList();
+            return pagedData;
+        }
     }
 }

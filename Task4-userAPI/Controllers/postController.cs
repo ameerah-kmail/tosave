@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Task4_userAPI.Filters;
@@ -7,7 +8,7 @@ using Task4_userAPI.Roles;
 
 namespace Task4_userAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
   
     [ApiController]
     public class postController : ControllerBase
@@ -61,10 +62,22 @@ namespace Task4_userAPI.Controllers
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult create(post _post)
         {
-            if(ClaimTypes.NameIdentifier==null)
-                return NotFound();
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var userId = claim.Value;
+            if(_postRepo.get(Convert.ToInt32(userId))==null);
+            return NotFound();
             _postRepo.add(_post);
             return Ok();
+        
+        }
+
+        [HttpGet, Authorize]
+        public List<post> GetBySearch(int PageN, int pageSize, string phrase)
+        {
+            var response = _postRepo.Search(PageN, pageSize, phrase);
+            return response;
+
 
         }
 
