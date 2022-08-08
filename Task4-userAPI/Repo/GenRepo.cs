@@ -1,4 +1,5 @@
-﻿using Task4_userAPI.Repo;
+﻿using System.Security.Claims;
+using Task4_userAPI.Repo;
 namespace Task4_userAPI.Repo
 {
 
@@ -7,14 +8,22 @@ namespace Task4_userAPI.Repo
         public List<T>? getAll();
         public T get(int id);
         public void delete(int id);
-        public T update(T _obj);
-        public T add(T _obj);
+        public T update(T _obj,int id);
+        public T add(T _obj,int id);
     }
     public class GenRepo<T> : IGenRepo<T> where T : class, IbaseMode
     {
         readonly MVCContext _context;
-        public T add(T _obj)
-        { 
+        public T add(T _obj,int id)
+        {
+            Type myType = _obj.GetType();
+            var prop1 = myType.GetProperties().FirstOrDefault(p => p.Name == "creatDate");
+            prop1.SetValue(_obj, DateTime.Now);
+            /////////////////////
+            var prop2 = myType.GetProperties().FirstOrDefault(p => p.Name == "creatBY");
+            prop2.SetValue(_obj, id);
+            ////////////////////////
+
             _context.Add(_obj);
             return _obj;
             _context.SaveChanges(); 
@@ -46,13 +55,25 @@ namespace Task4_userAPI.Repo
             _context.SaveChanges();
         }
 
-        public T update(T _obj)
+        public T update(T _obj,int id)
         {
+            Type myType = _obj.GetType();
+            var prop1 = myType.GetProperties().FirstOrDefault(p => p.Name == "updatetDate");
+            prop1.SetValue(_obj, DateTime.Now);
+            /////////////////////
+
+            
+            var prop2 = myType.GetProperties().FirstOrDefault(p => p.Name == "updateBY");
+            prop2.SetValue(_obj, id);
+            ////////////////////////
+
             _context.Set<T>().Update(_obj);
                // .Update<T>(_obj);
             return _obj;
             _context.SaveChanges();
         }
+
+
     }
 }
 

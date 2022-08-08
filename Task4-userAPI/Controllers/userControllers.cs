@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Task4_userAPI.DataTransferObject;
 using Task4_userAPI.Filters;
 using Task4_userAPI.Models;
@@ -48,10 +49,9 @@ namespace Task4_userAPI.Controllers
         public ActionResult Delete(int id)
         {
             var _user = _userRepo.get(id);
-            var userVM = _mapper.Map<UserVM>(_user);
             if (_user == null)
                return NotFound();
-           // userVM.delete(id);
+            _userRepo.delete(id);
             return Ok();
         }
 
@@ -59,10 +59,14 @@ namespace Task4_userAPI.Controllers
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult update(user _user)
         {
-            var user = _userRepo.get(_user.Id);
-            var userVM = _mapper.Map<UserVM>(_user);
-             if (user == null) return NotFound();
-            //userVM.update(_user);
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var userId = claimsIdentity.FindFirst("Id").Value;
+            if (_postRepo.get(Convert.ToInt32(userId)) == null)
+                return NotFound();
+            ////////////////
+           // var user = _userRepo.get(_user.Id);
+           //  if (user == null) return NotFound();
+            _userRepo.update(_user, Convert.ToInt32(userId));
             return Ok();
         }
 
@@ -70,7 +74,12 @@ namespace Task4_userAPI.Controllers
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult create(user _user)
         {
-            _userRepo.add(_user);
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var userId = claimsIdentity.FindFirst("Id").Value;
+            if (_postRepo.get(Convert.ToInt32(userId)) == null)
+                return NotFound();
+            /////////////////
+            _userRepo.add(_user, Convert.ToInt32(userId));
             return Ok();
 
         }

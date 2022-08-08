@@ -52,9 +52,11 @@ namespace Task4_userAPI.Controllers
         [ServiceFilter(typeof(ValidationFilter))]
         public ActionResult update(post _post)
         {
-            var post = _postRepo.get(_post.Id);
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var userId = claimsIdentity.FindFirst("Id").Value;
+            var post = _postRepo.get(Convert.ToInt32(userId));
             if (post == null) return NotFound();
-            _postRepo.update(_post);
+            _postRepo.update(_post, Convert.ToInt32(userId));
             return Ok();
         }
 
@@ -63,11 +65,10 @@ namespace Task4_userAPI.Controllers
         public ActionResult create(post _post)
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
-            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var userId = claim.Value;
-            if(_postRepo.get(Convert.ToInt32(userId))==null);
+            var userId = claimsIdentity.FindFirst("Id").Value;
+            if(_postRepo.get(Convert.ToInt32(userId))==null)
             return NotFound();
-            _postRepo.add(_post);
+            _postRepo.add(_post, Convert.ToInt32(userId));
             return Ok();
         
         }
@@ -77,7 +78,6 @@ namespace Task4_userAPI.Controllers
         {
             var response = _postRepo.Search(PageN, pageSize, phrase);
             return response;
-
 
         }
 
